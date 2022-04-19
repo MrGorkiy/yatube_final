@@ -36,11 +36,7 @@ class Post(models.Model):
         related_name="posts",
         verbose_name="Автор",
     )
-    image = models.ImageField(
-        'Картинка',
-        upload_to='posts/',
-        blank=True
-    )
+    image = models.ImageField("Картинка", upload_to="posts/", blank=True)
 
     class Meta:
         verbose_name = "Пост"
@@ -74,16 +70,17 @@ class Comment(models.Model):
     def __str__(self):
         return self.text
 
+
 class Follow(models.Model):
     user = models.ForeignKey(
         User,
-        related_name='follower',
-        verbose_name='Подписчик',
+        related_name="follower",
+        verbose_name="Подписчик",
         on_delete=models.CASCADE,
     )
     author = models.ForeignKey(
         User,
-        related_name='following',
-        verbose_name='Автор',
+        related_name="following",
+        verbose_name="Автор",
         on_delete=models.CASCADE,
     )

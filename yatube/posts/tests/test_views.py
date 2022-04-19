@@ -1,15 +1,15 @@
-import tempfile
 import shutil
+import tempfile
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.cache import cache
 
-from django.conf import settings
-from ..models import Group, Post, Follow
+from ..models import Follow, Group, Post
 
 INDEX_PAGE = reverse("posts:index")
 FOLLOWER_PAGE = reverse("posts:follow_index")
@@ -22,7 +22,6 @@ TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class TaskPagesTests(TestCase):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -36,17 +35,15 @@ class TaskPagesTests(TestCase):
         )
 
         cls.small_gif = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
+            b"\x47\x49\x46\x38\x39\x61\x02\x00"
+            b"\x01\x00\x80\x00\x00\x00\x00\x00"
+            b"\xFF\xFF\xFF\x21\xF9\x04\x00\x00"
+            b"\x00\x00\x00\x2C\x00\x00\x00\x00"
+            b"\x02\x00\x01\x00\x00\x02\x02\x0C"
+            b"\x0A\x00\x3B"
         )
         uploaded = SimpleUploadedFile(
-            name='small.gif',
-            content=cls.small_gif,
-            content_type='image/gif'
+            name="small.gif", content=cls.small_gif, content_type="image/gif"
         )
 
         cls.post = Post.objects.create(
@@ -54,18 +51,24 @@ class TaskPagesTests(TestCase):
             text="Тестовый текст",
             image=uploaded,
         )
-        cls.PAGE_AUTHOR = (
-            reverse("posts:profile", kwargs={"username": cls.user}))
-        cls.POST_DETALS = (
-            reverse("posts:post_detail", kwargs={"post_id": cls.post.pk}))
-        cls.POST_EDIT = (
-            reverse("posts:post_edit", kwargs={"post_id": cls.post.pk}))
-        cls.POST_CREATE_COMMENT = (reverse("posts:add_comment",
-                                           kwargs={"post_id": cls.post.pk}))
-        cls.FOLLOW = (reverse("posts:profile_follow",
-                              kwargs={"username": cls.author}))
-        cls.UNFOLLOW = (reverse("posts:profile_unfollow",
-                                kwargs={"username": cls.author}))
+        cls.PAGE_AUTHOR = reverse(
+            "posts:profile", kwargs={"username": cls.user}
+        )
+        cls.POST_DETALS = reverse(
+            "posts:post_detail", kwargs={"post_id": cls.post.pk}
+        )
+        cls.POST_EDIT = reverse(
+            "posts:post_edit", kwargs={"post_id": cls.post.pk}
+        )
+        cls.POST_CREATE_COMMENT = reverse(
+            "posts:add_comment", kwargs={"post_id": cls.post.pk}
+        )
+        cls.FOLLOW = reverse(
+            "posts:profile_follow", kwargs={"username": cls.author}
+        )
+        cls.UNFOLLOW = reverse(
+            "posts:profile_unfollow", kwargs={"username": cls.author}
+        )
 
     def setUp(self):
         self.authorized_client = Client()
@@ -74,10 +77,6 @@ class TaskPagesTests(TestCase):
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
-        # Модуль shutil - библиотека Python с удобными инструментами
-        # для управления файлами и директориями:
-        # создание, удаление, копирование, перемещение, изменение папок и файлов
-        # Метод shutil.rmtree удаляет директорию и всё её содержимое
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def test_pages_uses_correct_template(self):
@@ -125,7 +124,7 @@ class TaskPagesTests(TestCase):
         self.assertEqual(response.context.get("post").author, self.user)
         self.assertEqual(response.context.get("post").text, "Тестовый текст")
         self.assertEqual(response.context.get("post").pk, 1)
-        self.assertEqual(response.context.get("post").image, 'posts/small.gif')
+        self.assertEqual(response.context.get("post").image, "posts/small.gif")
 
     def test_profile_user_pages_show_correct_context(self):
         """Проверка контекста страницы пользователя."""
@@ -133,14 +132,14 @@ class TaskPagesTests(TestCase):
         objects = len(response.context["page_obj"])
         first_object = response.context["page_obj"][0]
         self.assertEqual(objects, 1)
-        self.assertEqual(first_object.image, 'posts/small.gif')
+        self.assertEqual(first_object.image, "posts/small.gif")
 
     def test_group_list_page_show_correct_context(self):
         """Проверка контекста страницы группы постов."""
         uploaded = SimpleUploadedFile(
-            name='smalls.gif',
+            name="smalls.gif",
             content=TaskPagesTests.small_gif,
-            content_type='image/gif'
+            content_type="image/gif",
         )
         post = Post.objects.create(
             author=self.user,
@@ -157,14 +156,14 @@ class TaskPagesTests(TestCase):
         self.assertEqual(task_group_0, "Тестовая группа")
         self.assertEqual(task_text_0, "Тестовый текст")
         self.assertEqual(task_pk_0, post.pk)
-        self.assertEqual(first_object.image, 'posts/smalls.gif')
+        self.assertEqual(first_object.image, "posts/smalls.gif")
 
     def test_new_post_for_index_page_contains(self):
         """Проверяем главную на наличие нового поста"""
         uploaded = SimpleUploadedFile(
-            name='small_index.gif',
+            name="small_index.gif",
             content=TaskPagesTests.small_gif,
-            content_type='image/gif'
+            content_type="image/gif",
         )
         post = Post.objects.create(
             author=self.user,
@@ -180,13 +179,13 @@ class TaskPagesTests(TestCase):
         self.assertEqual(task_text, "Тестовый текст 2")
         self.assertEqual(task_pk, post.pk)
         self.assertEqual(first_object.group.title, "Тестовая группа")
-        self.assertEqual(first_object.image, 'posts/small_index.gif')
+        self.assertEqual(first_object.image, "posts/small_index.gif")
 
     def test_cache_index(self):
         """Проверяем работу кеша главной страницы"""
         response_1 = self.authorized_client.get(INDEX_PAGE)
-        first_object = response_1.context['page_obj'][0]
-        post_bytes_text = first_object.text.encode('utf-8')
+        first_object = response_1.context["page_obj"][0]
+        post_bytes_text = first_object.text.encode("utf-8")
 
         # удалить запись
         first_object.delete()
@@ -200,15 +199,17 @@ class TaskPagesTests(TestCase):
         self.assertNotIn(post_bytes_text, response_3.content)
 
     def test_follow_and_unfollow(self):
-        '''Проверяем работу подписки и отписки авторизированым пользователем'''
+        """Проверяем работу подписки и отписки авторизированым пользователем"""
         self.authorized_client.get(TaskPagesTests.FOLLOW)
-        following = Follow.objects.filter(author=TaskPagesTests.author,
-                                          user=TaskPagesTests.user).all()
+        following = Follow.objects.filter(
+            author=TaskPagesTests.author, user=TaskPagesTests.user
+        ).all()
         self.assertEqual(following.count(), 1)
 
         self.authorized_client.get(TaskPagesTests.UNFOLLOW)
-        following_unsub = Follow.objects.filter(author=TaskPagesTests.author,
-                                          user=TaskPagesTests.user).all()
+        following_unsub = Follow.objects.filter(
+            author=TaskPagesTests.author, user=TaskPagesTests.user
+        ).all()
         self.assertEqual(following_unsub.count(), 0)
 
     def test_follow_add_post_test(self):
@@ -230,7 +231,6 @@ class TaskPagesTests(TestCase):
         response_sub = authorized_clients.get(FOLLOWER_PAGE)
         first_object = response_sub.context["page_obj"]
         self.assertEqual(len(first_object), 0)
-
 
 
 class PagesPajiginatorTests(TestCase):
@@ -258,21 +258,21 @@ class PagesPajiginatorTests(TestCase):
 
     def setUp(self):
         self.user = PagesPajiginatorTests.users.objects.create_user(
-            username="HasNoName")
+            username="HasNoName"
+        )
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
     def test_index_page_contains_ten_records(self):
         """Проверка 1 страницы паджинатора главной страницы"""
         response = self.authorized_client.get(INDEX_PAGE)
-        self.assertEqual(len(response.context["page_obj"]),
-                         settings.PAGINATOR_COUNT)
+        self.assertEqual(
+            len(response.context["page_obj"]), settings.PAGINATOR_COUNT
+        )
 
     def test_index_next_page_contains_six_records(self):
         """Проверка 2 страницы паджинатора главной страницы"""
-        response = self.authorized_client.get(
-            INDEX_PAGE + "?page=2"
-        )
+        response = self.authorized_client.get(INDEX_PAGE + "?page=2")
         self.assertEqual(len(response.context["page_obj"]), 6)
 
     def test_group_list_page_show_correct_context(self):
@@ -302,8 +302,9 @@ class CreatPost(TestCase):
             text="Тестовый текст 0",
             group=cls.group,
         )
-        cls.PAGE_AUTHOR = (
-            reverse("posts:profile", kwargs={"username": cls.user}))
+        cls.PAGE_AUTHOR = reverse(
+            "posts:profile", kwargs={"username": cls.user}
+        )
 
     def setUp(self):
         self.authorized_client = Client()
