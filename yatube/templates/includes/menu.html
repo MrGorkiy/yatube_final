@@ -1,0 +1,40 @@
+{% with request.resolver_match.view_name as view_name %}
+<ul class="nav nav-pills">
+<li class="nav-item">
+  <a class="nav-link {% if view_name == 'about:author' %}active{% endif %}"
+     href="{% url 'about:author' %}">Об авторе</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link {% if view_name == 'about:tech' %}active{% endif %}"
+     href="{% url 'about:tech' %}">Технологии</a>
+</li>
+{% if request.user.is_authenticated %}
+<li class="nav-item">
+  <a class="nav-link {% if view_name == 'posts:post_create' %}active{% endif %}"
+     href="{% url 'posts:post_create' %}">Новая запись</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link {% if view_name == 'users:password_reset_form' %}active{% endif %}"
+     href="{% url 'users:password_reset_form' %}">Изменить пароль</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link {% if view_name == 'users:logout' %}active{% endif %}"
+     href="{% url 'users:logout' %}">Выйти</a>
+</li>
+<li>
+  <a class="nav-link {% if author.username == user.username %}
+  {% if view_name == 'posts:profile' %}active{% endif %}{% endif %}"
+     href="{% url 'posts:profile' user.username %}">Пользователь: {{ user.username }}</a>
+</li>
+{% else %}
+<li class="nav-item">
+  <a class="nav-link {% if view_name == 'users:login' %}active{% endif %}"
+     href="{% url 'users:login' %}">Войти</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link {% if view_name == 'users:signup' %}active{% endif %}"
+     href="{% url 'users:signup' %}">Регистрация</a>
+</li>
+{% endif %}
+</ul>
+{% endwith %}

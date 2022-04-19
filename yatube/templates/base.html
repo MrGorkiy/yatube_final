@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+  {% include 'includes/header.html' %}
+  <title>{% block header %} Yatube {% endblock %}</title>
+</head>
+<body>
+<header>
+  <nav class="navbar navbar-light" style="background-color: lightskyblue">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'posts:index' %}">
+        <img src="{% static 'img/logo.png' %}" width="30" height="30"
+             class="d-inline-block align-top" alt="">
+          <span style="color:red">Ya</span>tube
+      </a>
+      {% include 'includes/menu.html' %}
+    </div>
+  </nav>
+</header>
+<main>
+  <div class="container py-5">
+    {% block content %}
+      <p>'Ты <i>не можешь</i> получить правильные <b>ответы</b>,<br>
+          если у тебя нет правильных <s>вопросов</s> запросов.'</p>
+    {% endblock %}
+    </div>
+</main>
+<footer class="border-top text-center py-3">
+  {% include 'includes/footer.html' %}
+</footer>
+</body>
