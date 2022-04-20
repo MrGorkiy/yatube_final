@@ -47,6 +47,7 @@ class CommentsAdmin(admin.ModelAdmin):
         "author",
     )
 
+
 @admin.register(Follow)
 class FollowersAdmin(admin.ModelAdmin):
     list_display = (

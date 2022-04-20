@@ -260,6 +260,7 @@ class TaskPagesTests(TestCase):
         self.assertNotIn("Отписаться",
                          response_subscribe_self_profile.content.decode())
 
+
 class PagesPajiginatorTests(TestCase):
     @classmethod
     def setUpClass(cls):
