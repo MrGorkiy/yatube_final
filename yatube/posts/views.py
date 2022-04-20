@@ -131,7 +131,6 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    # Подписаться на автора
     user = request.user
     author = get_object_or_404(User, username=username)
     if user != author:
@@ -141,7 +140,6 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
-    # Дизлайк, отписка
     user = request.user
     author = get_object_or_404(User, username=username)
     Follow.objects.filter(author=author, user=user).delete()

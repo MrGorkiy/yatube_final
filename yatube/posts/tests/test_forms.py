@@ -9,8 +9,6 @@ from django.urls import reverse
 
 from ..models import Comment, Post
 
-User = get_user_model()
-
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 POST_CREATE_PAGE = reverse("posts:post_create")
@@ -21,7 +19,8 @@ class TaskCreateFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create_user(username="auth")
+        cls.users = get_user_model()
+        cls.user = cls.users.objects.create_user(username="auth")
 
         cls.post = Post.objects.create(
             author=cls.user,

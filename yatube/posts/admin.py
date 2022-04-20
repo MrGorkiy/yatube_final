@@ -1,11 +1,10 @@
 from django.contrib import admin
 
-from .models import Comment, Group, Post
+from .models import Comment, Group, Post, Follow
 
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    # Поля, которые должны отображаться в админке
     list_display = (
         "pk",
         "text",
@@ -14,20 +13,16 @@ class PostAdmin(admin.ModelAdmin):
         "pub_date",
         "author",
     )
-    # Интерфейс для поиска по тексту постов
     search_fields = (
         "text",
         "author",
         "group",
     )
-    # Добавляем возможность редактировать группу для поста
     list_editable = ("group",)
-    # Добавляем возможность фильтрации по дате
     list_filter = (
         "pub_date",
         "group",
     )
-    # Это свойство сработает для всех пустых колонок
     empty_value_display = "-пусто-"
 
 
@@ -50,4 +45,19 @@ class CommentsAdmin(admin.ModelAdmin):
     list_filter = (
         "created",
         "author",
+    )
+
+@admin.register(Follow)
+class FollowersAdmin(admin.ModelAdmin):
+    list_display = (
+        "author",
+        "user",
+    )
+    search_fields = (
+        "author",
+        "user",
+    )
+    list_filter = (
+        "author",
+        "user",
     )

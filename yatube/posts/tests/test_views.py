@@ -232,6 +232,33 @@ class TaskPagesTests(TestCase):
         first_object = response_sub.context["page_obj"]
         self.assertEqual(len(first_object), 0)
 
+    def test_auth_user_can_subscribe(self):
+        response_get_profile = self.authorized_client.get(reverse(
+            "posts:profile", kwargs={"username": self.author}))
+        self.assertIn("Подписаться", response_get_profile.content.decode())
+        self.assertNotIn("Отписаться", response_get_profile.content.decode())
+
+        self.authorized_client.post(reverse(
+            "posts:profile_follow", kwargs={"username": self.author}))
+
+        response_get_profile_follow = self.authorized_client.get(reverse(
+            "posts:profile", kwargs={"username": self.author}))
+
+        is_follow = Follow.objects.filter(user=self.user,
+                                          author=self.author).count()
+        self.assertEqual(is_follow, 1)
+
+        self.assertIn("Отписаться",
+                      response_get_profile_follow.content.decode())
+
+    def test_cannot_self_subscribe(self):
+        '''Проверка самоподписки'''
+        response_subscribe_self_profile = self.authorized_client.get(reverse(
+            "posts:profile", kwargs={"username": self.user}))
+        self.assertNotIn("Подписаться",
+                         response_subscribe_self_profile.content.decode())
+        self.assertNotIn("Отписаться",
+                         response_subscribe_self_profile.content.decode())
 
 class PagesPajiginatorTests(TestCase):
     @classmethod

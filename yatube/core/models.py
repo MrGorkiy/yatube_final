@@ -6,7 +6,6 @@ User = get_user_model()
 
 class CreatedModel(models.Model):
     """Абстрактная модель. Добавляет дату создания."""
-
     pub_date = models.DateTimeField("Дата создания", auto_now_add=True)
     author = models.ForeignKey(
         User,
@@ -16,5 +15,4 @@ class CreatedModel(models.Model):
     )
 
     class Meta:
-        # Это абстрактная модель:
         abstract = True

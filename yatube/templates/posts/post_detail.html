@@ -53,21 +53,22 @@
           </div>
         </div>
       {% endif %}
-
-      {% for comment in comments %}
-        <div class="media mb-4">
-          <div class="media-body">
-            <h5 class="mt-0">
-              <a href="{% url 'posts:profile' comment.author.username %}">
-                {{ comment.author.username }}
-              </a>
-            </h5>
-              <p>
-               {{ comment.text }}
-              </p>
-            </div>
-          </div>
-      {% endfor %}
+        {% for comment in comments %}
+          {% with text=comment.text username=comment.author.username %}
+            <div class="media mb-4">
+              <div class="media-body">
+                <h5 class="mt-0">
+                  <a href="{% url 'posts:profile' username %}">
+                    {{ username }}
+                  </a>
+                </h5>
+                  <p>
+                   {{ text }}
+                  </p>
+                </div>
+              </div>
+          {% endwith %}
+        {% endfor %}
     </article>
   </div>
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Q, F, CheckConstraint
 
 User = get_user_model()
 
@@ -72,15 +73,23 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
-    user = models.ForeignKey(
-        User,
-        related_name="follower",
-        verbose_name="Подписчик",
-        on_delete=models.CASCADE,
-    )
     author = models.ForeignKey(
         User,
         related_name="following",
         verbose_name="Автор",
         on_delete=models.CASCADE,
     )
+    user = models.ForeignKey(
+        User,
+        related_name="follower",
+        verbose_name="Подписчик",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = "Подписку"
+        verbose_name_plural = "Подписки"
+        unique_together = ('author', 'user')
+        constraints = [
+            CheckConstraint(check=~Q(author=F('user')), name='author_not_user')
+        ]

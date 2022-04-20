@@ -5,9 +5,8 @@ from django.test import Client, TestCase
 
 from ..models import Group, Post
 
-User = get_user_model()
-
 PAGE_INDEX = "/"
+PAGE_INDEX_FOLLOW = "/follow/"
 PAGE_GROUP = "/group/test-slug-group/"
 PAGE_POST = "/posts/1/"
 PAGE_POST_EDIT = "/posts/1/edit/"
@@ -21,8 +20,9 @@ class TaskURLTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.users = get_user_model()
         cls.guest_client = Client()
-        cls.user = User.objects.create_user(username="NoName")
+        cls.user = cls.users.objects.create_user(username="NoName")
         cls.authorized_client = Client()
         cls.authorized_client.force_login(cls.user)
 
@@ -49,6 +49,7 @@ class TaskURLTests(TestCase):
             PAGE_USER_PROFILE: HTTPStatus.OK,
             PAGE_UNEXISTING: HTTPStatus.NOT_FOUND,
             PAGE_ADD_COMMENTS: HTTPStatus.FOUND,
+            PAGE_INDEX_FOLLOW: HTTPStatus.FOUND,
         }
         for address, status in templates_url_status.items():
             with self.subTest(address=address):
@@ -72,8 +73,10 @@ class TaskURLTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_urls_authorized_client_correct_template(self):
-        """URL-адрес использует соответствующий шаблон для
-        авторизированного пользователя."""
+        """
+        URL-адрес использует соответствующий шаблон для
+        авторизированного пользователя.
+        """
         templates_url_names = {
             PAGE_INDEX: "posts/index.html",
             PAGE_GROUP: "posts/group_list.html",
@@ -81,6 +84,7 @@ class TaskURLTests(TestCase):
             PAGE_POST_EDIT: "posts/create_post.html",
             PAGE_CREATE: "posts/create_post.html",
             PAGE_USER_PROFILE: "posts/profile.html",
+            PAGE_INDEX_FOLLOW: "posts/follow.html",
         }
         for address, template in templates_url_names.items():
             with self.subTest(address=address):
