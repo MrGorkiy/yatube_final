@@ -11,8 +11,12 @@ urlpatterns = [
     path("posts/<int:post_id>/", views.post_detail, name="post_detail"),
     path("create/", views.post_create, name="post_create"),
     path("posts/<int:post_id>/edit/", views.post_edit, name="post_edit"),
+    path("posts/<int:post_id>/delit/", views.post_delit, name="post_delit"),
     path(
         "posts/<int:post_id>/comment/", views.add_comment, name="add_comment"
+    ),
+    path(
+        "posts/<int:post_id>/delcomment/<int:pk>", views.delite_comment, name="del_comment"
     ),
     path("follow/", views.follow_index, name="follow_index"),
     path(

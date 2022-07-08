@@ -89,7 +89,9 @@ def post_edit(request, post_id):
         request.POST or None, files=request.FILES or None, instance=post
     )
     if form.is_valid():
-        form.save()
+        post = form.save(commit=False)
+        post.author_id = request.user.id
+        post.save()
         return redirect("posts:post_detail", post_id=post_id)
     context = {
         "post": post,
@@ -97,6 +99,15 @@ def post_edit(request, post_id):
         "is_edit": True,
     }
     return render(request, "posts/create_post.html", context)
+
+
+@login_required
+def post_delit(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    if post.author != request.user:
+        return redirect("posts:post_detail", post_id=post_id)
+    Post.objects.filter(pk=post.pk).delete()
+    return redirect("posts:profile", username=post.author.username)
 
 
 @login_required
@@ -112,16 +123,25 @@ def add_comment(request, post_id):
 
 
 @login_required
+def delite_comment(request, post_id, pk):
+    user = request.user
+    author = Comment.objects.get(pk=pk)
+    if user == author.author:
+        author.delete()
+    return redirect("posts:post_detail", post_id=post_id)
+
+
+@login_required
 def follow_index(request):
     user = request.user
     post_list = Post.objects.filter(author__following__user=user)
-    if len(post_list) < 0:
-        following = False
-    else:
-        following = True
     paginator = Paginator(post_list, settings.PAGINATOR_COUNT)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    if len(post_list) == 0:
+        following = False
+    else:
+        following = True
     context = {
         "page_obj": page_obj,
         "following": following,

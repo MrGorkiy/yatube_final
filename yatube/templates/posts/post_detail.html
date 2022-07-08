@@ -16,12 +16,15 @@
               </a>
             </li>
           {% endif %}
-          <li class="list-group-item">
-            Автор: <a href="{% url 'posts:profile' post.author %}">
-            {{ post.author.get_full_name }}</a>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-          Всего постов автора:  {{ post.author.posts.count }}
+        <li class="list-group-item">
+          Автор: <a href="{% url 'posts:profile' post.author %}">
+          {{ post.author.get_full_name }}</a>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+        Всего постов автора:  {{ post.author.posts.count }}
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Комментариев:  {{ comments.count }}
         </li>
       </ul>
     </aside>
@@ -29,6 +32,9 @@
       {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
         <img class="card-img my-2" src="{{ im.url }}">
       {% endthumbnail %}
+      {% if post.title %}
+        <h4>{{ post.title }}</h4>
+      {% endif %}
       <p>
         {{ post.text|linebreaksbr }}
       </p>
@@ -37,6 +43,9 @@
           <a class="btn btn-primary" role="button"
              href="{% url 'posts:post_edit' post.pk %}">
              Редактировать пост</a>
+          <a class="btn btn-danger" role="button"
+             href="{% url 'posts:post_delit' post.pk %}">
+             Удалить пост</a>
         {% endif %}
       {% endif %}
       {% if user.is_authenticated %}
@@ -46,7 +55,9 @@
             <form method="post" action="{% url 'posts:add_comment' post.id %}">
               {% csrf_token %}
               <div class="form-group mb-2">
-                {{ form.text|addclass:"form-control" }}
+                <div class="col-sm-10">
+                  {{ form.text|addclass:"form-control" }}
+                </div>
               </div>
               <button type="submit" class="btn btn-primary">Отправить</button>
             </form>
@@ -54,19 +65,27 @@
         </div>
       {% endif %}
         {% for comment in comments %}
-          {% with text=comment.text username=comment.author.username %}
+          {% with text=comment.text username=comment.author.username pk=comment.pk fullname=comment.author.get_full_name %}
             <div class="media mb-4">
               <div class="media-body">
-                <h5 class="mt-0">
-                  <a href="{% url 'posts:profile' username %}">
-                    {{ username }}
-                  </a>
-                </h5>
-                  <p>
-                   {{ text }}
-                  </p>
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <a href="{% url 'posts:profile' username %}">
+                        @{{ username }} ({{ fullname }})
+                      </a>
+                    </h5>
+                    <p class="card-text">{{ text|linebreaksbr }}</p>
+                    {% if username == request.user.username %}
+                    <a href="{% url 'posts:del_comment' post.pk pk %}"
+                       class="card-link">
+                      удалить комментарий
+                    </a>
+                    {% endif %}
+                  </div>
                 </div>
               </div>
+            </div>
           {% endwith %}
         {% endfor %}
     </article>

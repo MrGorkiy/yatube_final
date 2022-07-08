@@ -35,7 +35,11 @@
             {% endfor %}
           </div>
         {% endif %}
-        <form method="post" action="{% url 'posts:post_create' %}" enctype="multipart/form-data">
+        {% if is_edit %}
+          <form method="post" action="{% url 'posts:post_edit' post.pk %}" enctype="multipart/form-data">
+        {% else %}
+          <form method="post" action="{% url 'posts:post_create' %}" enctype="multipart/form-data">
+        {% endif %}
           {% csrf_token %}
           {# {{ form.as_p }} #}
           {% for field in form %}

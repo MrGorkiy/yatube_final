@@ -4,13 +4,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = "kuqq(os(ari8qmd=5-zpiq*)ee9)eajga9^s4hs3+yg+_^d!co"
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
+    'www.MrGorkiy.pythonanywhere.com',
+    'MrGorkiy.pythonanywhere.com',
     "localhost",
     "127.0.0.1",
     "[::1]",
     "testserver",
+    "51.250.31.187"
 ]
 
 INSTALLED_APPS = [
@@ -25,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -35,6 +39,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = "yatube.urls"
@@ -113,3 +118,7 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
 }
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]

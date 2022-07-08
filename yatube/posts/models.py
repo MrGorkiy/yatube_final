@@ -19,6 +19,8 @@ class Group(models.Model):
 
 
 class Post(models.Model):
+    title = models.CharField("Загаловок", help_text="Придумай загаловок",
+                             max_length=180, blank=True, null=True)
     text = models.TextField("Текст", help_text="Текст поста")
     pub_date = models.DateTimeField("Дата создания", auto_now_add=True)
     group = models.ForeignKey(
@@ -45,7 +47,7 @@ class Post(models.Model):
         ordering = ("-pub_date",)
 
     def __str__(self):
-        return self.text[:15]
+        return self.text[:300]
 
 
 class Comment(models.Model):
@@ -93,6 +95,5 @@ class Follow(models.Model):
             CheckConstraint(check=~Q(author=F('user')),
                             name='author_not_user'),
             UniqueConstraint(fields=['user', 'author'],
-                             name='unique_author_unique'
-            )
+                             name='unique_author_unique')
         ]
