@@ -1,4 +1,9 @@
 ### Проект Yatube — платформа для публикаций, блог.
+[![Python](https://img.shields.io/badge/-Python-464646?style=flat&logo=Python&logoColor=ffffff&color=043A6B)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/-Django-464646?style=flat&logo=Django&logoColor=ffffff&color=043A6B)](https://www.djangoproject.com/)
+[![HTML](https://img.shields.io/badge/-HTML-464646?style=flat&logo=Html5&logoColor=ffffff&color=043A6B)](https://html.spec.whatwg.org/multipage/)
+[![CSS](https://img.shields.io/badge/-CSS_Bootstrap-464646?style=flat&logo=Css3&logoColor=ffffff&color=043A6B)]([https://html.spec.whatwg.org/multipage/](https://getbootstrap.ru/))
+
 ### Техническое задание
 > Необходимо разработать социальную сеть для публикации личных дневников.
 > Это будет сайт, на котором можно создать свою страницу. 
@@ -35,5 +40,28 @@
 - для отображения страниц /about/author/ и /about/tech/применяются ожидаемые view-функции и шаблоны.
 #### Тестирование Forms
 - валидная форма создает/изменяет пост
+
+# Запуск
+1. Скопировать репозиторий:
+```
+git clone https://github.com/MrGorkiy/hw05_final
+```
+2. Создать и активировать виртуальное окружение:
+```
+python -m venv <env_name>
+source venv/Scripts/activate
+```
+3. Установить зависимости из файла requirements.txt:
+```
+pip install -r requirements.txt
+```
+4. Выполнить миграции:
+```
+python manage.py migrate
+```
+5. В папке с файлом manage.py выполнить команду:
+```
+python manage.py runserver
+```
 
 Автор: [Брысин Максим (Mr. Gorkiy)](https://github.com/MrGorkiy)
