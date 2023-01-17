@@ -64,4 +64,4 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-Автор: [Брысин Максим (Mr. Gorkiy)](https://github.com/MrGorkiy)
+Автор: [MrGorkiy](https://github.com/MrGorkiy)
